@@ -20,18 +20,20 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', }}>
+    <View style={{ flex: 1, backgroundColor: 'white', paddingHorizontal: 20 }}>
       <View style={{ height: 100 }}></View>
 
       {/* Request Bluetooth Permission */}
-      <TouchableOpacity onPress={() => BLEService.requestBluetoothPermission()}>
+      <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={() => BLEService.requestBluetoothPermission()}>
         <Text>Request Bluetooth Permission</Text>
       </TouchableOpacity>
 
       {/* Start BLE Scan */}
-      <TouchableOpacity onPress={() => BLEService.initializeBLE().then(() =>
-        BLEService.scanDevices(addFoundDevice, null, true)
-      )}>
+      <TouchableOpacity
+        style={{ justifyContent: 'center', alignItems: 'center' }}
+        onPress={() => BLEService.initializeBLE().then(() =>
+          BLEService.scanDevices(addFoundDevice, null, true)
+        )}>
         <Text>Start Scan</Text>
       </TouchableOpacity>
 
@@ -39,8 +41,10 @@ export default function HomeScreen() {
       <FlatList
         data={devices}
         keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 200 }}
         renderItem={({ item }) => (
-          <View style={{ padding: 10, borderBottomWidth: 1 }}>
+          <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#f8f8f8' }}>
             <Text>ID: {item.id}</Text>
             <Text>Name: {item.name ?? 'Unknown'}</Text>
             <Text>RSSI: {item.rssi}</Text>
