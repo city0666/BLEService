@@ -489,6 +489,7 @@ import {
         }
       }
   
+      console.log("Permission have not been granted");
       this.showErrorToast('Permission have not been granted')
   
       return false
