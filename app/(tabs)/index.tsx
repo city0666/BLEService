@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, View, TouchableOpacity, Text, FlatList, } from 'react-native';
+import { Image, StyleSheet, Platform, View, TouchableOpacity, Text, FlatList, Alert } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -10,6 +10,7 @@ import { useState } from 'react';
 
 export default function HomeScreen() {
   const [devices, setDevices] = useState<Device[]>([]);
+  const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
 
   const addFoundDevice = (device: Device) => {
     console.log("Found Device:", device);
@@ -17,6 +18,18 @@ export default function HomeScreen() {
       const exists = prevDevices.some((d) => d.id === device.id);
       return exists ? prevDevices : [...prevDevices, device];
     });
+  };
+
+
+  const connectToDevice = async (device: Device) => {
+    try {
+      const connected = await BLEService.connectToDevice(device.id);
+      setConnectedDevice(connected);
+      Alert.alert("Connected", `Connected to ${device.name || "Unknown Device"}`);
+    } catch (error) {
+      Alert.alert("Connection Failed", "Unable to connect to the device.");
+      console.error("Connection error:", error);
+    }
   };
 
   return (
@@ -44,11 +57,17 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 200 }}
         renderItem={({ item }) => (
-          <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#f8f8f8' }}>
-            <Text>ID: {item.id}</Text>
-            <Text>Name: {item.name ?? 'Unknown'}</Text>
-            <Text>RSSI: {item.rssi}</Text>
-          </View>
+          <TouchableOpacity
+            onPress={() => connectToDevice(item)}
+            style={{
+              padding: 10,
+              borderBottomWidth: 1,
+              borderBottomColor: 'gray',
+              backgroundColor: connectedDevice?.id === item.id ? 'lightgreen' : 'white'
+            }}>
+            <Text>{item.name || "Unknown Device"}</Text>
+            <Text>{item.id}</Text>
+          </TouchableOpacity>
         )}
       />
 
